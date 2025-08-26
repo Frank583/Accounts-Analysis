@@ -38,8 +38,8 @@ def prepare_trades(df: pd.DataFrame) -> pd.DataFrame:
     df["Profit"] = pd.to_numeric(df["Profit"], errors='coerce')
 
     # 是否為美分賬戶
-    df["is_cent_related"] = df["Symbol"].str.lower().str.contains("cent")
-    if df["is_cent_related"] == True:
+    df["is_cent_related"] = df["Item"].str.lower().str.contains("cent")
+    if df["is_cent_related"].any():
         df["is_1m_big_win"] = (df['is_scalping']) & (df["Profit"] > SINGLE_TRADE_PROFIT_TH * 100)
     else:
         df["is_1m_big_win"] = (df['is_scalping']) & (df["Profit"] > SINGLE_TRADE_PROFIT_TH)
@@ -249,3 +249,4 @@ if __name__ == "__main__":
         report = detect_seconds_scalping_mt5(filtered_trades)
 
     print(report)
+
