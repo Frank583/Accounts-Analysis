@@ -25,6 +25,7 @@ def prepare_trades(df: pd.DataFrame) -> pd.DataFrame:
 
     # 持仓时长（秒）
     hold_seconds = (df["Close Time"] - df["Open Time"]).dt.total_seconds()
+    print(hold_seconds)
     # 若存在负值/缺失，将其赋值为0
     hold_seconds = hold_seconds.clip(lower=0).fillna(0)
     df["hold_seconds"] = hold_seconds
@@ -77,6 +78,7 @@ def aggregate_by_account(df: pd.DataFrame) -> pd.DataFrame:
     # 逐账户基础统计
     base = g.agg(
         total_trades=("Profit", "size"),
+        total_holding_seconds=("hold_seconds", "sum"),
         total_profit=("Profit", "sum"),
         short_trades_3m=("is_short", "sum"),
         short_trades_1m=("is_scalping", "sum"),
@@ -86,6 +88,8 @@ def aggregate_by_account(df: pd.DataFrame) -> pd.DataFrame:
         profitable_lots=("profit_volume", "sum"),
     )
 
+    # 平均持仓时间
+    base['avg_holding_seconds'] = base['total_holding_seconds'] / base['total_trades']
     # 平均每手利潤
     base['profit_per_lot'] = base['total_profit'] / base['total_lots']
     # 3分钟内平仓交易数量占比
@@ -185,6 +189,7 @@ def aggregate_by_account2(df: pd.DataFrame) -> pd.DataFrame:
     # 逐账户基础统计
     base = g.agg(
         total_trades=("Profit", "size"),
+        total_holding_seconds=("hold_seconds", "sum"),
         total_profit=("Profit", "sum"),
         short_trades_3m=("is_short", "sum"),
         short_trades_1m=("is_scalping", "sum"),
@@ -194,6 +199,8 @@ def aggregate_by_account2(df: pd.DataFrame) -> pd.DataFrame:
         profitable_lots=("profit_volume", "sum"),
     )
 
+    # 平均持仓时间
+    base['avg_holding_seconds'] = base['total_holding_seconds'] / base['total_trades']
     # 平均每手利潤
     base['profit_per_lot'] = base['total_profit'] / base['total_lots']
     # 3分钟内平仓交易数量占比
@@ -230,7 +237,7 @@ if __name__ == "__main__":
     pd.set_option('display.max_columns', None)  # Show all columns
     pd.set_option('display.width', 1000)  # Increase display width to prevent line wrapping
     '''暫時從本地文件讀取'''
-    filename = "C:\\Users\\Frank W\\OneDrive - Logtec Innovation Limited\\Desktop\\Data Integration\\Abnormal Accounts\\ReportHistory-904923.html"
+    filename = "C:\\Users\\Frank W\\OneDrive - Logtec Innovation Limited\\Desktop\\Data Integration\\Abnormal Accounts\\Statement_1457318.htm"
     # MT4 report files
     if filename.endswith(".htm"):
         trades = pd.read_html(filename, header=2)[0]
@@ -249,4 +256,3 @@ if __name__ == "__main__":
         report = detect_seconds_scalping_mt5(filtered_trades)
 
     print(report)
-
