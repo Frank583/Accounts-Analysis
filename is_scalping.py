@@ -25,7 +25,6 @@ def prepare_trades(df: pd.DataFrame) -> pd.DataFrame:
 
     # 持仓时长（秒）
     hold_seconds = (df["Close Time"] - df["Open Time"]).dt.total_seconds()
-    print(hold_seconds)
     # 若存在负值/缺失，将其赋值为0
     hold_seconds = hold_seconds.clip(lower=0).fillna(0)
     df["hold_seconds"] = hold_seconds
@@ -256,3 +255,4 @@ if __name__ == "__main__":
         report = detect_seconds_scalping_mt5(filtered_trades)
 
     print(report)
+
