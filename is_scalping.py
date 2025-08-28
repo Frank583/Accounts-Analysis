@@ -84,6 +84,7 @@ def aggregate_by_account(df: pd.DataFrame) -> pd.DataFrame:
         trades_3m_profit=("Profit", lambda x: x[df.loc[x.index, "is_short"]].sum()),
         has_1m_big_win=("is_1m_big_win", "any"),
         total_lots=("Volume", "sum"),
+        trades_3m_lots=("Volume", lambda x: x[df.loc[x.index, "is_short"]].sum()),
         profitable_lots=("profit_volume", "sum"),
     )
 
@@ -195,6 +196,7 @@ def aggregate_by_account2(df: pd.DataFrame) -> pd.DataFrame:
         trades_3m_profit=("Profit", lambda x: x[df.loc[x.index, "is_short"]].sum()),
         has_1m_big_win=("is_1m_big_win", "any"),
         total_lots=("Volume", "sum"),
+        trades_3m_lots=("Volume", lambda x: x[df.loc[x.index, "is_short"]].sum()),
         profitable_lots=("profit_volume", "sum"),
     )
 
@@ -255,4 +257,5 @@ if __name__ == "__main__":
         report = detect_seconds_scalping_mt5(filtered_trades)
 
     print(report)
+
 
